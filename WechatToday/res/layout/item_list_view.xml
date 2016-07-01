@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/iv_photo"
+        android:layout_width="120dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:padding="7dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/guide2" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/iv_photo"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:padding="7dp"
+        android:text="20年前的激情戏，发现尺度大到无法忍受,怎么会出现这样的结局"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/iv_photo"
+        android:layout_toRightOf="@id/iv_photo"
+        android:padding="7dp"
+        android:text="一点资讯"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/iv_photo"
+        android:layout_alignParentRight="true"
+        android:padding="7dp"
+        android:text="2016-06-27"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="13sp" />
+
+</RelativeLayout>
