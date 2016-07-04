@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#a000" >
+        android:background="@drawable/top" >
 
         <TextView
             android:layout_width="wrap_content"

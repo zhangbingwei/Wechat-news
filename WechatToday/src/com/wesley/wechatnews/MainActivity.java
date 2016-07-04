@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.KeyEvent;
@@ -19,6 +21,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -29,15 +32,16 @@ import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.wesley.wechatnews.NewsData.Data;
 
-public class MainActivity extends Activity {
+public class MainActivity extends SlidingFragmentActivity {
 
 	public static final String URL = "http://v.juhe.cn/weixin/query?pno=&ps=&dtype=&key=57a8c271dd6d486d2609c7505106ce2d";
 
@@ -52,28 +56,39 @@ public class MainActivity extends Activity {
 	private List<Data> list;
 
 	private NewsAdapter adapter; // ListView适配器
-	private TextView tvWeek; // 显示星期
 	private ImageButton ibSave; // 收藏按钮
+	private ImageButton ibMenu; // 侧边栏打开关闭按钮
 
 	// 当前第几页
 	private int currentPage = 1;
 	// 每页的条目
 	private int itemCount;
 	// 总共多少页
-	private int totalPage;
+	private int totalPage = 25;
+
+	// 侧滑菜单对象
+	private SlidingMenu slidingMenu;
+
+	// 网络变化的广播接收
+	private ConnectionChangeReceiver networkReceiver;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.refresh_activity_main);
 
+		// 设置侧边栏
+		setBehindContentView(R.layout.left_menu);
+		slidingMenu = getSlidingMenu();
+		slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);// 设置全屏触摸
+		int width = getWindowManager().getDefaultDisplay().getWidth();// 获取屏幕宽度
+		slidingMenu.setBehindOffset(width * 100 / 320); // 设置预留屏幕宽度
+
+		initLeftMenu();
+
 		weChatNewsDB = WeChatNewsDB.getInstance(this);
 		adapter = new NewsAdapter();
-
-		tvWeek = (TextView) findViewById(R.id.tv_week);
-		// 设置当前星期几
-		tvWeek.setText(getWeek());
 
 		ibSave = (ImageButton) findViewById(R.id.ib_save);
 		// 主页面点击收藏按钮跳转到收藏页面
@@ -86,9 +101,27 @@ public class MainActivity extends Activity {
 			}
 		});
 
+		ibMenu = (ImageButton) findViewById(R.id.ib_menu);
+		ibMenu.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				slidingMenu.toggle();
+			}
+		});
+
 		lvNews = (PullToRefreshListView) findViewById(R.id.lv_news);
 
-		if (NetworkUtils.checkNetworkConnection(MainActivity.this)) {
+		// 动态注册广播接收器
+		// 暂时证明还没有执行到广播，晚点再进行修改，注意！！！！！！！！！！！
+		networkReceiver = new ConnectionChangeReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+		registerReceiver(networkReceiver, filter);
+
+		boolean isConnected = getIntent().getBooleanExtra("network", true);
+		System.out.println("获取到的网络是到底连接了没有呢：：：" + isConnected);
+		if (isConnected) {
 			getDataFromServer(URL);
 		} else {
 			Toast.makeText(MainActivity.this, "网络不可用,请先开启网络!",
@@ -154,6 +187,121 @@ public class MainActivity extends Activity {
 
 	}
 
+	private void initLeftMenu() {
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction transaction = fm.beginTransaction();
+		transaction.replace(R.id.fl_left_menu, new LeftMenuFragment(),
+				"fragment_left_menu").commit();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		LeftMenuFragmentView();
+	}
+
+	private ListView lvLeftMenu;
+	String[] functions = new String[] { "我的资料", "我的收藏", "我的相册" };
+
+	// 获取侧边栏fragment,进行操作
+	public void LeftMenuFragmentView() {
+		FragmentManager fm = getSupportFragmentManager();
+		LeftMenuFragment fragment = (LeftMenuFragment) fm
+				.findFragmentByTag("fragment_left_menu");
+
+		View view = fragment.getView();
+
+		ImageView ivMyPhoto = (ImageView) view.findViewById(R.id.iv_myphoto);
+		ivMyPhoto.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				startActivity(new Intent(MainActivity.this, LoginActivity.class));
+				slidingMenu.toggle();
+			}
+		});
+
+		TextView tvWeek = (TextView) view.findViewById(R.id.tv_week);
+		tvWeek.setText(getWeek());
+		// TextView tvName = (TextView) view.findViewById(R.id.tv_name);
+		// TextView tvDesp = (TextView) view.findViewById(R.id.tv_desp);
+
+		final Button btDayNight = (Button) view.findViewById(R.id.bt_day_night);
+		btDayNight.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				btDayNight.setText("日间");
+				Utils.setStyle(MainActivity.this, 0.0f);
+			}
+		});
+
+		lvLeftMenu = (ListView) view.findViewById(R.id.lv_left_menu);
+
+		MyLeftMenuAdapter leftAdapter = new MyLeftMenuAdapter();
+
+		lvLeftMenu.setAdapter(leftAdapter);
+
+		lvLeftMenu.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				switch (arg2) {
+				case 0:
+
+					break;
+				case 1:
+					startActivity(new Intent(MainActivity.this,
+							FavouriteActivity.class));
+					break;
+				case 2:
+
+					break;
+				case 3:
+
+					break;
+				default:
+					break;
+				}
+				slidingMenu.toggle();
+			}
+		});
+
+	}
+
+	// 侧边栏的适配器
+	class MyLeftMenuAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			return functions.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return functions[position];
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			convertView = View.inflate(MainActivity.this,
+					R.layout.item_left_menu, null);
+			TextView tvFunction = (TextView) convertView
+					.findViewById(R.id.tv_function);
+
+			tvFunction.setText(functions[position]);
+
+			return convertView;
+		}
+
+	}
+
 	// 当下拉刷新或者上拉加载没有更多数据的时候休眠
 	public void noDataSleep() {
 		new Thread(new Runnable() {
@@ -206,9 +354,9 @@ public class MainActivity extends Activity {
 						Intent intent = new Intent(MainActivity.this,
 								NewsDetailActivity.class);
 						Data data = list.get(position - 1);
-						System.out.println("传递到详情页的position是：" + position);
-						System.out.println("主页面ListView传递过去的新闻链接URL是：：："
-								+ data.url);
+						// System.out.println("传递到详情页的position是：" + position);
+						// System.out.println("主页面ListView传递过去的新闻链接URL是：：："
+						// + data.url);
 
 						Bundle bundle = new Bundle();
 						bundle.putSerializable("data", data);
@@ -232,10 +380,10 @@ public class MainActivity extends Activity {
 			}
 
 			@Override
-			public void onFailure(HttpException error, String msg) {
-
-				Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT)
-						.show();
+			public void onFailure(
+					com.lidroid.xutils.exception.HttpException error, String msg) {
+				Toast.makeText(MainActivity.this, "网络不可用，请检查网络",
+						Toast.LENGTH_SHORT).show();
 				error.printStackTrace();
 			}
 
@@ -255,8 +403,11 @@ public class MainActivity extends Activity {
 			}
 
 			@Override
-			public void onFailure(HttpException error, String msg) {
-
+			public void onFailure(
+					com.lidroid.xutils.exception.HttpException error, String msg) {
+				Toast.makeText(MainActivity.this, "网络不可用，请检查网络",
+						Toast.LENGTH_SHORT).show();
+				error.printStackTrace();
 			}
 		});
 
@@ -289,6 +440,9 @@ public class MainActivity extends Activity {
 			currentPage = mNewsResult.pno;
 			totalPage = mNewsResult.totalPage;
 		} else {
+			// if (list == null) {
+			// list = new ArrayList<NewsData.Data>();
+			// }
 			// 如果是下拉刷新，则将新增加的数据加到ListView的头部
 			if (isPullDown) {
 				List<Data> pullDownList = mNewsResult.list;
@@ -408,7 +562,8 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+		if (keyCode == KeyEvent.KEYCODE_BACK && !slidingMenu.isMenuShowing()) {
 			exit();
 			return false;
 		}
@@ -424,6 +579,12 @@ public class MainActivity extends Activity {
 			finish();
 			System.exit(0);
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(networkReceiver);
 	}
 
 }
