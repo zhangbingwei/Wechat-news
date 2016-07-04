@@ -16,5 +16,4 @@ public class Utils {
 		}
 		mActivity.getWindow().setAttributes(lp);
 	}
-
 }

@@ -34,6 +34,8 @@
         <activity android:name=".FavouriteActivity" />
         <activity android:name=".FavouriteDetailActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".InfoActivity" />
+        <activity android:name=".MyPhotosActivity" />
     </application>
 
 </manifest>

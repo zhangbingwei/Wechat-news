@@ -36,10 +36,12 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.wesley.wechatnews.NewsData.Data;
+import com.wesley.wechatnews.WeatherData.Today;
 
 public class MainActivity extends SlidingFragmentActivity {
 
@@ -71,6 +73,11 @@ public class MainActivity extends SlidingFragmentActivity {
 
 	// 网络变化的广播接收
 	private ConnectionChangeReceiver networkReceiver;
+
+	// 天气对象和数据
+	private Today todayWeather;
+	private String weather;
+	private String temp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +130,9 @@ public class MainActivity extends SlidingFragmentActivity {
 		System.out.println("获取到的网络是到底连接了没有呢：：：" + isConnected);
 		if (isConnected) {
 			getDataFromServer(URL);
+
+			// 获取上海市当天天气预报
+			getWeatherDataFromServer("http://v.juhe.cn/weather/index?cityname=%E4%B8%8A%E6%B5%B7&dtype=&format=&key=7b1909cd875493f88e6661439bda838a");
 		} else {
 			Toast.makeText(MainActivity.this, "网络不可用,请先开启网络!",
 					Toast.LENGTH_SHORT).show();
@@ -201,6 +211,8 @@ public class MainActivity extends SlidingFragmentActivity {
 	}
 
 	private ListView lvLeftMenu;
+	private TextView btWeather;
+	private TextView tvWeek;
 	String[] functions = new String[] { "我的资料", "我的收藏", "我的相册" };
 
 	// 获取侧边栏fragment,进行操作
@@ -221,18 +233,18 @@ public class MainActivity extends SlidingFragmentActivity {
 			}
 		});
 
-		TextView tvWeek = (TextView) view.findViewById(R.id.tv_week);
-		tvWeek.setText(getWeek());
-		// TextView tvName = (TextView) view.findViewById(R.id.tv_name);
-		// TextView tvDesp = (TextView) view.findViewById(R.id.tv_desp);
+		tvWeek = (TextView) view.findViewById(R.id.tv_week);
+		// tvWeek.setText(getWeek());
 
-		final Button btDayNight = (Button) view.findViewById(R.id.bt_day_night);
-		btDayNight.setOnClickListener(new OnClickListener() {
+		btWeather = (TextView) view.findViewById(R.id.bt_weather);
+
+		final TextView tvMode = (TextView) view.findViewById(R.id.tv_mode);
+		tvMode.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				btDayNight.setText("日间");
 				Utils.setStyle(MainActivity.this, 0.0f);
+				tvMode.setText("正常");
 			}
 		});
 
@@ -249,17 +261,16 @@ public class MainActivity extends SlidingFragmentActivity {
 					long arg3) {
 				switch (arg2) {
 				case 0:
-
+					startActivity(new Intent(MainActivity.this,
+							InfoActivity.class));
 					break;
 				case 1:
 					startActivity(new Intent(MainActivity.this,
 							FavouriteActivity.class));
 					break;
 				case 2:
-
-					break;
-				case 3:
-
+					startActivity(new Intent(MainActivity.this,
+							MyPhotosActivity.class));
 					break;
 				default:
 					break;
@@ -268,6 +279,38 @@ public class MainActivity extends SlidingFragmentActivity {
 			}
 		});
 
+	}
+
+	// 获取服务器上的天气数据
+	public void getWeatherDataFromServer(String url) {
+		HttpUtils utils = new HttpUtils();
+		utils.send(HttpMethod.GET, url, new RequestCallBack<String>() {
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = responseInfo.result;
+				parseWeatherData(result);
+
+			}
+
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				Toast.makeText(MainActivity.this, "网络不可用，请检查网络",
+						Toast.LENGTH_SHORT).show();
+				error.printStackTrace();
+			}
+		});
+	}
+
+	public void parseWeatherData(String result) {
+		Gson gson = new Gson();
+		WeatherData weatherData = gson.fromJson(result, WeatherData.class);
+		todayWeather = weatherData.result.today;
+		weather = todayWeather.weather;
+		temp = todayWeather.temperature;
+
+		btWeather.setText("上海:" + temp + " " + weather);
+		tvWeek.setText(todayWeather.date_y + " " + todayWeather.week);
 	}
 
 	// 侧边栏的适配器
@@ -317,11 +360,11 @@ public class MainActivity extends SlidingFragmentActivity {
 				.show();
 	}
 
-	private String getWeek() {
-		Date date = new Date();
-		SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
-		return dateFm.format(date);
-	}
+	// private String getWeek() {
+	// Date date = new Date();
+	// SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+	// return dateFm.format(date);
+	// }
 
 	/**
 	 * 从服务器获取数据
