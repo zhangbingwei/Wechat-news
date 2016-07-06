@@ -46,42 +46,47 @@
         android:id="@+id/lv_left_menu"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="1.23"
         android:background="@drawable/left" >
     </ListView>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="33dp"
+        android:layout_weight="0.04"
         android:background="@drawable/left"
-        android:orientation="vertical" >
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/tv_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
             android:background="@null"
             android:text="护眼"
             android:textColor="@drawable/text_selector"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/bt_weather"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="上海:27C-32C 阴转多云"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_week"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="60dp"
+            android:text="星期一"
             android:textColor="#fff"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/bt_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:text="上海:27C-32C"
+            android:textColor="@drawable/text_selector"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
 </LinearLayout>

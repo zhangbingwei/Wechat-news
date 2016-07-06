@@ -36,6 +36,7 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".InfoActivity" />
         <activity android:name=".MyPhotosActivity" />
+        <activity android:name=".WeatherActivity" />
     </application>
 
 </manifest>

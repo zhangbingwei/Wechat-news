@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/left_menu_night"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="上海"
+        android:textColor="#efff"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="2016年07月05日  星期二"
+        android:textColor="#8fff"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tv_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="气温：27℃~35℃"
+            android:textColor="#efff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_temp"
+            android:layout_marginTop="5dp"
+            android:text="天气：雷阵雨转多云"
+            android:textColor="#efff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_weather"
+            android:layout_marginTop="5dp"
+            android:text="风力：南风微风"
+            android:textColor="#efff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_travel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_wind"
+            android:layout_marginTop="5dp"
+            android:text="旅行：较不宜"
+            android:textColor="#efff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_exe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_travel"
+            android:layout_marginTop="5dp"
+            android:text="锻炼：较不宜"
+            android:textColor="#efff"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_exe"
+            android:layout_marginLeft="5dp"
+            android:text="穿衣建议："
+            android:textColor="#efff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_dress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_exe"
+            android:layout_marginRight="5dp"
+            android:text="天气炎热，建议着短衫、短裙、短裤、薄型T恤衫等清凉夏季服装。"
+            android:textColor="#efff"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

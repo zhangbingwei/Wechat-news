@@ -104,7 +104,7 @@ public class NewsDetailActivity extends Activity {
 
 		// String url = getIntent().getStringExtra("url");
 		url = data.url; // 从传递过来的对象里获取到url
-		System.out.println("新闻详情页的链接URL是：：：：" + url);
+		// System.out.println("新闻详情页的链接URL是：：：：" + url);
 
 		wvNews.loadUrl(url);
 		wvNews.getSettings().setJavaScriptEnabled(true);

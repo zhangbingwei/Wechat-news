@@ -21,7 +21,6 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -76,7 +75,6 @@ public class MainActivity extends SlidingFragmentActivity {
 
 	// 天气对象和数据
 	private Today todayWeather;
-	private String weather;
 	private String temp;
 
 	@Override
@@ -234,9 +232,22 @@ public class MainActivity extends SlidingFragmentActivity {
 		});
 
 		tvWeek = (TextView) view.findViewById(R.id.tv_week);
-		// tvWeek.setText(getWeek());
+		tvWeek.setText(getWeek());
 
 		btWeather = (TextView) view.findViewById(R.id.bt_weather);
+
+		btWeather.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(MainActivity.this,
+						WeatherActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("todayWeather", todayWeather);
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+		});
 
 		final TextView tvMode = (TextView) view.findViewById(R.id.tv_mode);
 		tvMode.setOnClickListener(new OnClickListener() {
@@ -306,11 +317,9 @@ public class MainActivity extends SlidingFragmentActivity {
 		Gson gson = new Gson();
 		WeatherData weatherData = gson.fromJson(result, WeatherData.class);
 		todayWeather = weatherData.result.today;
-		weather = todayWeather.weather;
 		temp = todayWeather.temperature;
 
-		btWeather.setText("上海:" + temp + " " + weather);
-		tvWeek.setText(todayWeather.date_y + " " + todayWeather.week);
+		btWeather.setText("上海:" + temp);
 	}
 
 	// 侧边栏的适配器
@@ -360,11 +369,11 @@ public class MainActivity extends SlidingFragmentActivity {
 				.show();
 	}
 
-	// private String getWeek() {
-	// Date date = new Date();
-	// SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
-	// return dateFm.format(date);
-	// }
+	private String getWeek() {
+		Date date = new Date();
+		SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+		return dateFm.format(date);
+	}
 
 	/**
 	 * 从服务器获取数据
