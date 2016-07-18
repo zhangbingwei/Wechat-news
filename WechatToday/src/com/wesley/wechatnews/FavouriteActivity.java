@@ -20,7 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lidroid.xutils.BitmapUtils;
-import com.wesley.wechatnews.NewsData.Data;
+import com.wesley.wechatnews.WechatNewsData.Data;
 
 public class FavouriteActivity extends Activity {
 

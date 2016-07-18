@@ -3,7 +3,7 @@ package com.wesley.wechatnews;
 import java.io.Serializable;
 import java.util.List;
 
-public class NewsData {
+public class WechatNewsData {
 	public int error_code;
 	public String reason;
 	public Result result;
@@ -13,12 +13,6 @@ public class NewsData {
 		public int ps; // 一页显示的数据量是：20
 		public int totalPage; // 总的页数是：25
 		public List<Data> list;
-
-		@Override
-		public String toString() {
-			return "Result [pno=" + pno + ", ps=" + ps + ", totalPage="
-					+ totalPage + ", list=" + list + "]";
-		}
 
 	}
 
@@ -82,18 +76,6 @@ public class NewsData {
 			this.url = url;
 		}
 
-		@Override
-		public String toString() {
-			return "Data [id=" + id + ", firstImg=" + firstImg + ", title="
-					+ title + ", source=" + source + ", url=" + url + "]";
-		}
-
-	}
-
-	@Override
-	public String toString() {
-		return "NewsData [error_code=" + error_code + ", reason=" + reason
-				+ ", result=" + result + "]";
 	}
 
 }

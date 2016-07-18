@@ -35,7 +35,7 @@
         android:layout_weight="1"
         android:background="#ffeeeeee"
         android:divider="#19000000"
-        android:dividerHeight="2dp"
+        android:dividerHeight="3dp"
         android:fadingEdge="none" >
     </ListView>
 

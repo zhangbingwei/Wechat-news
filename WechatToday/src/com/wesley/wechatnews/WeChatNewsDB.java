@@ -8,7 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.wesley.wechatnews.NewsData.Data;
+import com.wesley.wechatnews.WechatNewsData.Data;
 
 public class WeChatNewsDB {
 
@@ -89,7 +89,7 @@ public class WeChatNewsDB {
 				.query("news_fav", null, null, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			do {
-				Data news = new NewsData().new Data();
+				Data news = new WechatNewsData().new Data();
 				news.setId(cursor.getString(cursor.getColumnIndex("news_id")));
 				news.setTitle(cursor.getString(cursor
 						.getColumnIndex("news_title")));

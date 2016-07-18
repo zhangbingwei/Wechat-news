@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wesley.wechatnews.NewsData.Data;
+import com.wesley.wechatnews.WechatNewsData.Data;
 
 public class NewsDetailActivity extends Activity {
 

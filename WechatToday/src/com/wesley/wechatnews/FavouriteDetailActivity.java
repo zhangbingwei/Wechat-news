@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wesley.wechatnews.NewsData.Data;
+import com.wesley.wechatnews.WechatNewsData.Data;
 
 public class FavouriteDetailActivity extends Activity {
 
@@ -71,7 +71,7 @@ public class FavouriteDetailActivity extends Activity {
 		String source = getIntent().getStringExtra("source");
 		title = getIntent().getStringExtra("title");
 
-		final Data news = new NewsData().new Data(id, image, title, source, url);
+		final Data news = new WechatNewsData().new Data(id, image, title, source, url);
 
 		// 进入文章详情页，判断是否为收藏的，如果收藏文章设置按钮为红色
 		if (mWeChatNewsDB.isFavourite(news)) {

@@ -39,7 +39,7 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.wesley.wechatnews.NewsData.Data;
+import com.wesley.wechatnews.WechatNewsData.Data;
 import com.wesley.wechatnews.WeatherData.Today;
 
 public class MainActivity extends SlidingFragmentActivity {
@@ -50,9 +50,9 @@ public class MainActivity extends SlidingFragmentActivity {
 
 	private PullToRefreshListView lvNews;
 
-	private NewsData mNewsData; // 获取的数据对象
+	private WechatNewsData mNewsData; // 获取的数据对象
 
-	private NewsData.Result mNewsResult; // 从接口中获取的数据结果
+	private WechatNewsData.Result mNewsResult; // 从接口中获取的数据结果
 
 	private List<Data> list;
 
@@ -482,7 +482,7 @@ public class MainActivity extends SlidingFragmentActivity {
 	 */
 	protected void parseData(String result, boolean isMore, boolean isPullDown) {
 		Gson gson = new Gson();
-		mNewsData = gson.fromJson(result, NewsData.class);
+		mNewsData = gson.fromJson(result, WechatNewsData.class);
 		// System.out.println("从聚合数据获取到的结果是：" + mNewsData);
 		mNewsResult = mNewsData.result;
 		// System.out.println("the result is :" + mNewsResult);
